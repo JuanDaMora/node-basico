@@ -1,28 +1,62 @@
 const {response}= require('express');
+const bcryptjs= require('bcryptjs');
 
-const getUser=(req, res)=> {
+const Usuario = require('../models/usuario');
 
-  const query = req.query;
+
+
+
+const getUser=async(req, res)=> {
+  const {limite=5,desde=0}=req.query;
+  const query={estado:true}
+
+
+  const [total,usuarios] = await Promise.all([
+    Usuario.countDocuments(query),
+    Usuario.find(query)
+        .skip(desde)
+        .limit(limite)
+  ])
+  
     res.json({
-        msg: 'get API Controller',
-        query
+        total,
+        usuarios
     });
   }
 
-  const postUser =(req, res)=> {
-    const {nombre,edad} = req.body;
+  const postUser = async(req, res)=> {
+
+    const {nombre, correo, password, rol}= req.body;
+    const usuario= new Usuario({nombre,correo,password,rol});
+
+
+    //Encriptar contraseña
+    const salt = bcryptjs.genSaltSync(10);
+    usuario.password= bcryptjs.hashSync(password,salt);
+
+    //Guardar en BD
+    await usuario.save();
 
     res.json({
-        msg: 'post API Controller',
-        nombre,edad
+        usuario
     });
   }
 
-  const putUser =(req, res)=> {
+  const putUser =async (req, res=response)=> {
+    
     const {id }= req.params;
+    const {password, google, ...resto}= req.body;
+
+    //TODO: Validar contra Base de datos
+    if(password){
+      const salt = bcryptjs.genSaltSync(10);
+      resto.password= bcryptjs.hashSync(password,salt);
+    }
+    const usuario= await Usuario.findByIdAndUpdate(id,resto);
+
     res.json({
         msg: 'put API Controller',
-        id
+        usuario
     });
   }
   
@@ -32,10 +66,15 @@ const getUser=(req, res)=> {
         msg: 'patch API Controller'
     });
   }
-  const deleteUser =(req, res)=> {
+  const deleteUser =async(req, res)=> {
+    const {id}=req.params;
+    //Eliminar fisicamente
+    // const usuario=await Usuario.findByIdAndDelete(id);
+
+    const usuario= await Usuario.findByIdAndUpdate(id,{estado:false});
 
     res.json({
-        msg: 'delete API Controller'
+        usuario
     });
   }
 
