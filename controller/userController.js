@@ -68,14 +68,12 @@ const getUser=async(req, res)=> {
   }
   const deleteUser =async(req, res)=> {
     const {id}=req.params;
-    //Eliminar fisicamente
-    // const usuario=await Usuario.findByIdAndDelete(id);
-
     const usuario= await Usuario.findByIdAndUpdate(id,{estado:false});
+    
 
-    res.json({
-        usuario
-    });
+    res.json(
+      usuario
+    );
   }
 
   module.exports={
