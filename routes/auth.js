@@ -1,6 +1,6 @@
 const { Router } = require("express");
 const { check } = require("express-validator");
-const { login } = require("../controller/authController.js");
+const { login, googleSingIn } = require("../controller/authController.js");
 const { validarCampos } = require("../middlewares/validar-campos");
 
 
@@ -13,6 +13,10 @@ router.post('/login',[
     check('password','La contraseña debe tener mas de 6 digitos').isLength({min:6}),
     validarCampos
 ],login);
+router.post('/google',[
+    check('if_token','id_token es necesario').not().isEmpty(),
+    validarCampos
+],googleSingIn);
 
 
 module.exports=router;
