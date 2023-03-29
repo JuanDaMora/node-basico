@@ -33,9 +33,10 @@ const getUser=async(req, res)=> {
     //Encriptar contraseña
     const salt = bcryptjs.genSaltSync(10);
     usuario.password= bcryptjs.hashSync(password,salt);
-
+    console.log(usuario);
     //Guardar en BD
     await usuario.save();
+
 
     res.json({
         usuario
@@ -68,14 +69,12 @@ const getUser=async(req, res)=> {
   }
   const deleteUser =async(req, res)=> {
     const {id}=req.params;
-    //Eliminar fisicamente
-    // const usuario=await Usuario.findByIdAndDelete(id);
-
     const usuario= await Usuario.findByIdAndUpdate(id,{estado:false});
+    
 
-    res.json({
-        usuario
-    });
+    res.json(
+      usuario
+    );
   }
 
   module.exports={
