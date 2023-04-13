@@ -7,8 +7,14 @@ class Server{
 
         this.port=process.env.PORT;
 
-        this.authPath = '/api/auth';
-        this.usersPath = '/api/users';
+        this.paths={
+            auth:       '/api/auth',
+            buscar:       '/api/buscar',
+            users:      '/api/users',
+            categorias: '/api/categorias',
+            products: '/api/productos'
+        }
+
 
         //conecctar a base de datos
 
@@ -35,10 +41,11 @@ class Server{
     routes(){
 
         
-        this.app.use(this.authPath,  require('../routes/auth'));
-
-
-        this.app.use(this.usersPath,  require('../routes/users'));
+        this.app.use(this.paths.auth,       require('../routes/auth'));
+        this.app.use(this.paths.buscar,     require('../routes/buscar'));
+        this.app.use(this.paths.users,      require('../routes/users'));
+        this.app.use(this.paths.categorias, require('../routes/categorias'));
+        this.app.use(this.paths.products,   require('../routes/products'));
      }
     listen(){
         this.app.listen(this.port, ()=>{

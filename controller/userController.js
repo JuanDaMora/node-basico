@@ -16,7 +16,7 @@ const getUser=async(req, res)=> {
     Usuario.find(query)
         .skip(desde)
         .limit(limite)
-  ])
+  ]);
   
     res.json({
         total,
